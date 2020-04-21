@@ -16,6 +16,7 @@ using std::endl;
 using std::min;
 
 using Matrix = vector<vector<int>>;
+const int wallWeight = 300000;
 
 void printMatrix(const Matrix &matrix)
 {
@@ -57,14 +58,19 @@ void getSurroundingPoints(const Matrix& matrix, const Point& currentPoint, vecto
 {
     auto stepSize = 1;
 
-    auto eightPoints = [=](int x, int y)
+    auto eightPoints = [currentPoint](int x, int y)
     {
         return !(x == currentPoint.x && y == currentPoint.y);
     };
 
-    auto fourPoints = [=](int x, int y)
+    auto fourPoints = [currentPoint](int x, int y)
     {
         return (x == currentPoint.x) != (y == currentPoint.y);
+    };
+
+    auto notAWall = [matrix](int x, int y)
+    {
+        return matrix[y][x] < wallWeight;
     };
 
     auto writeIndex = 0;
@@ -72,7 +78,7 @@ void getSurroundingPoints(const Matrix& matrix, const Point& currentPoint, vecto
     {
         for (auto y = currentPoint.y - stepSize; y <= currentPoint.y + stepSize; y += stepSize)
         {
-            if(eightPoints(x, y) && inBounds(matrix, {x, y}))
+            if(eightPoints(x, y) && inBounds(matrix, {x, y}) && notAWall(x, y))
             {
                 surroundingPoints[writeIndex] = {x, y, 0, 0, 0, std::make_shared<Point>(currentPoint)};
                 ++writeIndex;
@@ -182,7 +188,7 @@ Matrix getShortestPath(const Matrix &inputMatrix, deque<Point> controlPoints)
                 if (successor.x == target.x && successor.y == target.y)
                 {
                     cout << "Total Cost of Path: " << currentPoint.totalCost << endl;
-
+                    outputMatrix[target.y][target.x] = visited;
                     stop = true;
                     break;
                 }
@@ -219,7 +225,6 @@ Matrix getShortestPath(const Matrix &inputMatrix, deque<Point> controlPoints)
             outputMatrix[finishingPoint->y][finishingPoint->x] = visited;
             finishingPoint = finishingPoint->parent;
         }
-        outputMatrix[target.y][target.x] = visited;
     }
 
     return outputMatrix;
@@ -227,7 +232,7 @@ Matrix getShortestPath(const Matrix &inputMatrix, deque<Point> controlPoints)
 
 int main()
 {
-    int w = 300000;
+    int w = wallWeight;
 
 //    Matrix inputMatrix =
 //    {
