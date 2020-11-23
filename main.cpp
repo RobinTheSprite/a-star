@@ -18,6 +18,8 @@ using std::min;
 using Matrix = vector<vector<int>>;
 const int wallWeight = 300000;
 
+// printMatrix
+// prints the given 2D matrix to the console
 void printMatrix(const Matrix &matrix)
 {
     for (const auto& row : matrix)
@@ -39,6 +41,8 @@ void printMatrix(const Matrix &matrix)
     }
 }
 
+// Point
+// Stores information needed for the algorithm to operate
 struct Point
 {
     int x;
